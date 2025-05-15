@@ -1,0 +1,14 @@
+<% layout('layout') -%>
+
+<h1>Sửa danh mục</h1>
+<form action="/categories/edit/<%= category.id %>?_method=PUT" method="POST">
+    <div class="mb-3">
+        <label>Name:</label>
+        <input name="name" value="<%= category.name %>" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Description:</label>
+        <input name="description" type="text" value="<%= category.description %>" class="form-control" required>
+    </div>
+    <button class="btn btn-primary">Cập nhật</button>
+</form>

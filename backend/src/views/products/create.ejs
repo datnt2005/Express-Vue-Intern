@@ -1,0 +1,35 @@
+<% layout('layout') -%>
+
+<h1>Thêm người sản phẩm</h1>
+<form action="/products/create" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label>Name:</label>
+        <input name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Description:</label>
+        <input name="description" type="text" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Price:</label>
+        <input name="price" type="number" class="form-control" required>    
+    </div>
+    <div class="mb-3">
+        <label>Quantity:</label>
+        <input name="quantity" type="number" class="form-control" required min="0">    
+    </div>
+    <div class="mb-3">
+        <label>Category:</label>
+        <select name="category_id" class="form-control" required>
+            <option value="">Chọn danh mục</option>
+            <% categories.forEach(category => { %>
+                <option value="<%= category.id %>"><%= category.name %></option>
+            <% }) %>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>Image:</label>
+        <input name="image" type="file" class="form-control" >
+    </div>
+    <button class="btn btn-success">Thêm</button>
+</form>

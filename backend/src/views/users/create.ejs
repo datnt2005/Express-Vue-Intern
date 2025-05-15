@@ -1,0 +1,14 @@
+<% layout('layout') -%>
+
+<h1>Thêm người dùng mới</h1>
+<form action="/users/create" method="POST">
+    <div class="mb-3">
+        <label>Name:</label>
+        <input name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Email:</label>
+        <input name="email" type="email" class="form-control" required>
+    </div>
+    <button class="btn btn-success">Thêm</button>
+</form>

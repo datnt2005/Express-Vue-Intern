@@ -1,0 +1,35 @@
+<% layout('layout') -%>
+
+<h1>Sửa sản phẩm</h1>
+<form action="/products/edit/<%= product.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label>Name:</label>
+        <input name="name" value="<%= product.name %>" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Description:</label>
+        <input name="description" type="text" value="<%= product.description %>" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Price:</label>
+        <input name="price" type="number" value="<%= product.price %>" class="form-control" required>    
+    </div>
+    <div class="mb-3">
+        <label>Quantity:</label>
+        <input name="quantity" type="number" value="<%= product.quantity %>" class="form-control" required min="0">    
+    </div>
+    <div class="mb-3">
+        <label>Category:</label>
+        <select name="category_id" class="form-control" required>
+            <% categories.forEach(category => { %>
+                <option value="<%= category.id %>" <%= product.categoryId == category.id ? 'selected' : '' %>><%= category.name %></option>
+            <% }) %>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>Image:</label>
+        <input name="image" type="file" value="<%= product.image %>" class="form-control">
+    </div>
+    <img src="<%= product.image %>" alt="anh san pham" class="img-fluid mb-3" style="max-width: 200px;"> <br>
+    <button class="btn btn-primary">Cập nhật</button>
+</form>

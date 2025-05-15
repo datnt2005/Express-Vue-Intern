@@ -1,0 +1,24 @@
+<% layout('layout') -%>
+
+<h1>Danh sách người dùng</h1>
+<a href="/users/create" class="btn btn-primary mb-3">Thêm người dùng</a>
+<table class="table">
+    <thead>
+        <tr><th>ID</th><th>Name</th><th>Email</th><th>Hành động</th></tr>
+    </thead>
+    <tbody>
+        <% users.forEach(user => { %>
+        <tr>
+            <td><%= user.id %></td>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td>
+                <a href="/users/<%= user.id %>/edit" class="btn btn-warning btn-sm">Sửa</a>
+                <form action="/users/<%= user.id %>?_method=DELETE" method="POST" style="display:inline;">
+                    <button class="btn btn-danger btn-sm" onclick="return confirm('Xóa thật hả đại ca?')">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>

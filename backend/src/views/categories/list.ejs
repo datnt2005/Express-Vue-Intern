@@ -1,0 +1,23 @@
+<% layout('layout') -%>
+<h1>Danh sách danh mục </h1>
+<a href="/categories/create" class="btn btn-primary mb-3">Thêm danh mục </a>
+<table class="table">
+    <thead>
+        <tr><th>ID</th><th>Name</th><th>Description</th><th>Hành động</th></tr>
+    </thead>
+    <tbody>
+        <% categories.forEach(category => { %>
+        <tr>
+            <td><%= category.id %></td>
+            <td><%= category.name %></td>
+            <td><%= category.description %></td>
+            <td>
+                <a href="/categories/edit/<%= category.id %>" class="btn btn-warning btn-sm">Sửa</a>
+                <form action="/categories/delete/<%= category.id %>?_method=DELETE" method="POST" style="display:inline;">
+                    <button class="btn btn-danger btn-sm" onclick="return confirm('Xóa thật hả đại ca?')">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>

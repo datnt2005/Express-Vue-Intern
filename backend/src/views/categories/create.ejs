@@ -1,0 +1,14 @@
+<% layout('layout') -%>
+
+<h1>Thêm danh mục mới</h1>
+<form action="/categories/create" method="POST">
+    <div class="mb-3">
+        <label>Name:</label>
+        <input name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Description:</label>
+        <input name="description" type="text" class="form-control" required>
+    </div>
+    <button class="btn btn-success">Thêm</button>
+</form>

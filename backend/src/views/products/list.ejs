@@ -1,0 +1,29 @@
+<% layout('layout') -%>
+<h1>Danh sách sản phẩm</h1>
+<a href="/products/create" class="btn btn-primary mb-3">Thêm sản phẩm</a>
+<table class="table">
+    <thead>
+        <tr><th>ID</th><th>Name</th><th>Description</th><th>Price</th> <th>Quantity</th><th>Image</th><th>Category</th><th>Hành động</th></tr>
+    </thead>
+    <tbody>
+        <% products.forEach(product => { %>
+        <tr>
+            <td><%= product.id %></td>
+            <td><%= product.name %></td>
+            <td><%= product.description %></td>
+            <td><%= product.price %></td>
+            <td><%= product.quantity %></td>
+            <td>
+                <img src="<%= product.image %>" alt="<%= product.name %>" width="150" />
+            </td>
+            <td><%= product.category %></td>
+            <td>
+                <a href="/products/edit/<%= product.id %>" class="btn btn-warning btn-sm">Sửa</a>
+                <form action="/products/delete/<%= product.id %>?_method=DELETE" method="POST" style="display:inline;">
+                    <button class="btn btn-danger btn-sm" onclick="return confirm('Xóa thật hả đại ca?')">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>

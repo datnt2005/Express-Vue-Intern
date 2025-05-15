@@ -1,0 +1,14 @@
+<% layout('layout') -%>
+
+<h1>Sửa người dùng</h1>
+<form action="/users/edit/<%= user.id %>?_method=PUT" method="POST">
+    <div class="mb-3">
+        <label>Name:</label>
+        <input name="name" value="<%= user.name %>" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Email:</label>
+        <input name="email" type="email" value="<%= user.email %>" class="form-control" required>
+    </div>
+    <button class="btn btn-primary">Cập nhật</button>
+</form>
