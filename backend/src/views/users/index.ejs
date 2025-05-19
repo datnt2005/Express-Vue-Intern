@@ -1,4 +1,13 @@
 <% layout('layout') -%>
+<form action="/logout" method="POST">
+    <button class="btn btn-danger mb-3" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất không?')">Đăng xuất</button>
+</form>
+<% if (currentUser) { %>
+  <p>Chào, <strong><%= currentUser.name %></strong>!</p>
+<% } else { %>
+  <p>Chưa đăng nhập.</p>
+<% } %>
+
 <h1>Danh sách người dùng</h1>
 <a href="/users/create" class="btn btn-primary mb-3">Thêm người dùng</a>
 <table class="table">

@@ -1,36 +1,43 @@
+const bcrypt = require('bcrypt');
 const db = require('../config/db');
-
-const getUser = async (id) => {
+class User {
+  static async findById(id) {
     const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
     return rows[0];
-}
-const getAllUsers = async () => {
+  }
+
+  static async findAll() {
     const [rows] = await db.query('SELECT * FROM users');
     return rows;
-};
+  }
 
-const getUserById = async (id) => {
-    const [rows] = await db.query('SELECT * FROM users WHERE id = ?', [id]);
-    return rows[0];
-};
-
-const createUser = async (name, email) => {
-    const [result] = await db.query('INSERT INTO users (name, email) VALUES (?, ?)', [name, email]);
+  static async create(name, email, password) {
+    const [result] = await db.query('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, password]);
     return { id: result.insertId, name, email };
-};
+  }
 
-const updateUser = async (id, name, email) => {
-    await db.query('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, id]);
-};
+  static async update(id, name, email, password) {
+    await db.query('UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?', [name, email, password, id]);
+  }
 
-const deleteUser = async (id) => {
+  static async delete(id) {
     await db.query('DELETE FROM users WHERE id = ?', [id]);
-};
+  }
 
-module.exports = {
-    getAllUsers,
-    getUserById,
-    createUser,
-    updateUser,
-    deleteUser,
-};
+  static async loginUser(email, password) {
+    const [rows] = await db.query('SELECT * FROM users WHERE email = ? AND password = ?', [email , password]);
+    const user = rows[0];
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role 
+    };
+  }
+}
+module.exports = User;

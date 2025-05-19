@@ -1,32 +1,48 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import Demo from './components/demo.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div id="app">
+    <!-- Kiểm tra nếu là trang admin -->
+    <div v-if="isAdminPage" class="wrapper">
+      <sidebar-component></sidebar-component>
+      <div id="content">
+        <nav-component></nav-component>
+        <router-view></router-view> 
+      </div>
+    </div>
+    <!-- Các trang khác -->
+    <div v-else class="app">
+      <header-component></header-component>
+      <router-view></router-view>
+      <footer-component></footer-component>
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
-  <Demo msg="Vite + Vue" />
 </template>
 
+<script>
+import HeaderComponent from './components/AppHeader.vue';
+import FooterComponent from './components/AppFooter.vue';
+import SidebarComponent from './components/AppSidebar.vue';
+import NavComponent from './components/AppNav.vue';
+
+export default {
+  name: 'App',
+  components: {
+    HeaderComponent,
+    FooterComponent,
+    SidebarComponent,
+    NavComponent,
+  },
+  computed: {
+    isAdminPage() {
+      // Kiểm tra đường dẫn, nếu là trang admin thì trả về true
+      return this.$route.path.startsWith('/admin');
+    },
+  },
+};
+</script>
+
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+/* Định dạng cho layout admin */
+.admin {
+  display: flex;
 }
 </style>
