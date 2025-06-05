@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { isAuthenticated } = require('../middlewares/authMiddleware');
 
-router.get('/', isAuthenticated, userController.getUsers);
+router.get('/', userController.getUsers);
 router.get('/create', userController.showCreateUserForm);
 router.post('/create', userController.createUser);
 

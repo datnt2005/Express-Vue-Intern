@@ -27,11 +27,12 @@ class UserController {
         console.error('Redis cache set error:', redisError);
       }
 
-      res.render('users/index', { users, title: 'Danh sách người dùng' });
+      // res.render('users/index', { users, title: 'Danh sách người dùng' });
+      res.json(users);
     } catch (error) {
       console.error('Error fetching users:', error);
       req.flash('error', 'Không thể tải danh sách người dùng');
-      res.status(500).render('errors/404', { message: 'Internal Server Error', title: 'Lỗi' });
+      res.status(500).json({ message: 'Lỗi khi tải danh sách người dùng' });
     }
   }
 

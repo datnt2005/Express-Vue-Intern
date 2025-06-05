@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
 const upload = require('../middlewares/upload');
+const { isAuthenticated } = require('../middlewares/authMiddleware');
 
-router.get('/', productController.getProducts);
+
+router.get('/', isAuthenticated, productController.getProducts);
 router.get('/create', productController.showCreateProductForm);
 router.post('/create', upload.single('image'), productController.createProduct);
 

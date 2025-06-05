@@ -36,9 +36,9 @@
               <thead>
                 <tr>
                   <th><input type="checkbox" @change="toggleSelectAll" v-model="selectAll"></th>
-                  <th @click="sortBy('idUser')">
+                  <th @click="sortBy('id')">
                     ID
-                    <i class="fa-solid fs-6 text-muted" :class="getSortIcon('idUser')"></i>
+                    <i class="fa-solid fs-6 text-muted" :class="getSortIcon('id')"></i>
                   </th>
                   <th @click="sortBy('name')">
                     Tên
@@ -69,25 +69,25 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="user in sortedUsers" :key="user.idUser">
-                  <td><input type="checkbox" v-model="selectedUsers" :value="user.idUser"></td>
-                  <td>{{ user.idUser }}</td>
+                <tr v-for="user in sortedUsers" :key="user.id">
+                  <td><input type="checkbox" v-model="selectedUsers" :value="user.id"></td>
+                  <td>{{ user.id }}</td>
                   <td>{{ user.name }}</td>
                   <td>{{ user.username }}</td>
                   <td>{{ user.email }}</td>
                   <td>{{ user.phone }}</td>
                   <td>{{ user.role }}</td>
-                  <td>
+                  <!-- <td>
                     <img :src="getImagePath(user.image)" :alt="user.image" class="avatar-img">
-                  </td>
+                  </td> -->
                   <td>
                     <span class="badge" :class="statusBadge(user.status)">{{ user.status }}</span>
                   </td>
                   <td>
-                    <a :href="`/admin/users/update_user/${user.idUser}`" class="text-primary me-2">
+                    <a :href="`/users/edit/${user.id}`" class="text-primary me-2">
                       <i class="fa-solid fa-pen"></i>
                     </a>
-                    <a href="#" class="text-danger" @click.prevent="deleteUser(user.idUser)">
+                    <a href="#" class="text-danger" @click.prevent="deleteUser(user.id)">
                       <i class="fa-solid fa-trash"></i>
                     </a>
                   </td>
@@ -100,10 +100,11 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
+
+const BASE_API = 'http://localhost:3000'; 
 
 const users = ref([]);
 const searchQuery = ref('');
@@ -113,38 +114,47 @@ const selectAll = ref(false);
 const sortKey = ref('');
 const sortOrder = ref(1); // 1 = ASC, -1 = DESC
 
-onMounted(fetchUsers);
 
 function fetchUsers() {
-  axios.get('http://localhost/demoProject/backend/public/index.php/api/users')
-    .then(response => { users.value = response.data; })
-    .catch(() => { error.value = true; });
+  axios.get(`${BASE_API}/users`)
+    .then(response => {
+      users.value = response.data;
+      error.value = false;
+    })
+    .catch(() => {
+      error.value = true;
+    });
 }
 
 function searchUsers() {
   if (searchQuery.value) {
-    axios.get(`http://localhost/demoProject/backend/public/index.php/api/users/search?query=${searchQuery.value}`)
-      .then(response => { users.value = response.data; })
-      .catch(() => { error.value = true; });
+    axios.get(`${BASE_API}/users/search?query=${searchQuery.value}`)
+      .then(response => {
+        users.value = response.data;
+        error.value = false;
+      })
+      .catch(() => {
+        error.value = true;
+      });
   } else {
     fetchUsers();
   }
 }
 
-function getImagePath(path) {
-  return path.startsWith('http') ? path : `http://localhost/demoProject/backend/public/${path}`;
-}
+// function getImagePath(path) {
+//   return path.startsWith('http') ? path : `${BASE_API.replace('/api', '')}/${path}`;
+// }
 
 function statusBadge(status) {
   return status === 'Đang hoạt động' ? 'bg-success' : 'bg-danger';
 }
 
-function deleteUser(idUser) {
+function deleteUser(id) {
   if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
-    axios.delete(`http://localhost/demoProject/backend/public/index.php/api/users/${idUser}`)
+    axios.post(`${BASE_API}/users/delete/${id}`)
       .then(() => {
-        users.value = users.value.filter(user => user.idUser !== idUser);
         alert("Xóa người dùng thành công!");
+        fetchUsers(); // load lại danh sách mới nhất
       })
       .catch(() => alert("Lỗi khi xóa người dùng!"));
   }
@@ -152,7 +162,7 @@ function deleteUser(idUser) {
 
 function toggleSelectAll() {
   if (selectAll.value) {
-    selectedUsers.value = users.value.map(user => user.idUser);
+    selectedUsers.value = users.value.map(user => user.id);
   } else {
     selectedUsers.value = [];
   }
@@ -163,14 +173,16 @@ function deleteSelectedUsers() {
 
   if (confirm("Bạn có chắc chắn muốn xóa những người dùng đã chọn?")) {
     const deletePromises = selectedUsers.value.map(id =>
-      axios.delete(`http://localhost/demoProject/backend/public/index.php/api/users/${id}`)
+      axios.delete(`${BASE_API}/users/${id}`).catch(() =>
+        alert(`Lỗi khi xóa người dùng với ID: ${id}`)
+      )
     );
 
     Promise.all(deletePromises)
       .then(() => {
-        users.value = users.value.filter(user => !selectedUsers.value.includes(user.idUser));
-        selectedUsers.value = [];
         alert("Xóa người dùng thành công!");
+        selectedUsers.value = [];
+        fetchUsers(); // reload mới nhất
       })
       .catch(() => alert("Lỗi khi xóa người dùng!"));
   }
@@ -178,7 +190,7 @@ function deleteSelectedUsers() {
 
 function sortBy(key) {
   if (sortKey.value === key) {
-    sortOrder.value *= -1; // Đảo ngược thứ tự sắp xếp
+    sortOrder.value *= -1;
   } else {
     sortKey.value = key;
     sortOrder.value = 1;
@@ -186,9 +198,13 @@ function sortBy(key) {
 }
 
 const sortedUsers = computed(() => {
+  if (!sortKey.value) return users.value;
+
   return [...users.value].sort((a, b) => {
-    if (a[sortKey.value] < b[sortKey.value]) return -sortOrder.value;
-    if (a[sortKey.value] > b[sortKey.value]) return sortOrder.value;
+    const valA = a[sortKey.value];
+    const valB = b[sortKey.value];
+    if (valA < valB) return -sortOrder.value;
+    if (valA > valB) return sortOrder.value;
     return 0;
   });
 });
@@ -197,6 +213,8 @@ function getSortIcon(key) {
   if (sortKey.value !== key) return "fa-sort";
   return sortOrder.value === 1 ? "fa-sort-up" : "fa-sort-down";
 }
+
+onMounted(fetchUsers);
 </script>
 
 <style scoped>
